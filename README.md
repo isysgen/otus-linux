@@ -49,9 +49,23 @@ git config --global user.email "your_email@whatever.com"
 ```
 
 Создать репозиторий
-
+```
 git init 
 git add Vagrantfile
+```
+дальше проверям что могу это опубликовать
+```
+$ git push --set-upstream isysgen master
+To https://github.com/isysgen/otus-linux.git
+ ! [rejected]        master -> master (fetch first)
+error: failed to push some refs to 'https://github.com/isysgen/otus-linux.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+воспользовался десктопной утилитой с консолью продолжу разбиратьсмя позже.
 ---
 
 # **Kernel update**
@@ -208,6 +222,15 @@ sudo yum --enablerepo elrepo-kernel install kernel-ml -y
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
 Выбираем загрузку с новым ядром по-умолчанию:
+
+тут необходимо покапаться и уточнить из чего мы выбираем 
+в файле /boot/grub2/grub.cfg есть строчки
+```
+menuentry 'CentOS Linux (3.10.0-957.12.2.el7.x86_64) 7 (Core)' --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-957.12.2.el7.x86_64-advanced-8ac075e3-1124-4bb6-bef7-a6811bf8b870'
+
+и $default" = 'CentOS Linux (3.10.0-957.12.2.el7.x86_64) 7 (Core)' ]
+
+```
 ```
 sudo grub2-set-default 0
 ```
@@ -220,13 +243,21 @@ sudo reboot
 После перезагрузки виртуальной машины (3-4 минуты, зависит от мощности хостовой машины) заходим в нее и выполняем:
 
 ```
-uname -r
+[vagrant@kernel-update ~]$ uname -r
+5.5.1-1.el7.elrepo.x86_64
 ```
 
 ---
 
 # **Packer**
-Теперь необходимо создать свой образ системы, с уже установленым ядром 5й версии. Для это воспользуемся ранее установленной утилитой `packer`. В директории `packer` есть все необходимые настройки и скрипты для создания необходимого образа системы.
+Теперь необходимо создать свой образ системы, с уже установленым ядром 5й версии. Для это воспользуемся ранее установленной утилитой `packer`. 
+В директории `packer` есть все необходимые настройки и скрипты для создания необходимого образа системы.
+
+делаем следующее 
+```
+cd packer
+packer build centos.json
+```
 
 ### **packer provision config**
 Файл `centos.json` содержит описание того, как произвольный образ. Полное описание можно найти в документации к `packer`. Обратим внимание на основные секции или ключи.
@@ -279,31 +310,32 @@ packer build centos.json
 ### **vagrant init (тестирование)**
 Проведем тестирование созданного образа. Выполним его импорт в `vagrant`:
 
+так как vagrant отказывается видеть box из другой папки то поступаем следующим образом, и выводим список всех box
 ```
-vagrant box add --name centos-7-5 centos-7.7.1908-kernel-5-x86_64-Minimal.box
+>cd packer
+
+\manual_kernel_update\packer>vagrant box add --name centos-7-5 centos-7.7.1908-kernel-5-x86_64-Minimal.box
+==> box: Box file was not detected as metadata. Adding it directly...
+==> box: Adding box 'centos-7-5' (v0) for provider:
+    box: Unpacking necessary files from: file://C:/Users/emalinychev/Otus/OtusLinuxAdmin/manual_kernel_update/packer/centos-7.7.1908-kernel-5-x86_64-Minimal.box
+    box:
+==> box: Successfully added box 'centos-7-5' (v0) for 'virtualbox'!
+
+\manual_kernel_update\packer>vagrant box list
+centos-7-5 (virtualbox, 0)
+centos/7   (virtualbox, 1905.1)
 ```
+Он называться `centos-7-5`, данное имя было задалнно при помощи параметра `name` при импорте.
 
-Проверим его в списке имеющихся образов (ваш вывод может отличаться):
-
-```
-vagrant box list
-centos-7-5            (virtualbox, 0)
-```
-
-Он будет называться `centos-7-5`, данное имя мы задали при помощи параметра `name` при импорте.
-
-Теперь необходимо провести тестирование полученного образа. Для этого создадим новый Vagrantfile или воспользуемся имеющимся. Для нового создадим директорию `test` и в ней выполним:
-
-```
-vagrant init centos-7-5
-```
-
-Для имеющегося произведем замену значения `box_name` на имя импортированного образа. Соотвествующая строка примет вид:
+Теперь необходимо провести тестирование полученного образа. Для этого создадим новый Vagrantfile в директории `test` и в ней выполним:
 
 ```
-:box_name => "centos-7-5",
+manual_kernel_update\test>vagrant init centos-7-5
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
 ```
-
 Теперь запустим виртуальную машину, подключимся к ней и проверим, что у нас в ней новое ядро:
 
 ```
@@ -315,11 +347,13 @@ vagrant ssh
 и внутри виртуальной машины:
 
 ```
-[vagrant@kernel-update ~]$ uname -r
-5.3.1-1.el7.elrepo.x86_64
+\manual_kernel_update\test>vagrant ssh
+Last login: Mon Feb  3 19:31:32 2020 from 10.0.2.2
+[vagrant@localhost ~]$ uname -r
+5.5.1-1.el7.elrepo.x86_64
 ```
 
-Если все в порядке, то машина будет запущена и загрузится с новым ядром. В данном примере это `5.3.1`.
+Все в порядке, машина запущена и загрузится с новым ядром. 
 
 Удалим тестовый образ из локального хранилища:
 ```
@@ -353,17 +387,21 @@ vagrant cloud publish --release <username>/centos-7-5 1.0 virtualbox \
 После успешной загрузки вы получите сообщение:
 
 ```
-Complete! Published <username>/centos-7-5
-tag:             <username>/centos-7-5-cli
-username:        <username>
+Complete! Published isysgen/centos-7-5
+tag:             isysgen/centos-7-5-cli
+username:        isysgen
 name:            centos-7-5
 private:         false
 ...
 providers:       virtualbox
 ```
 
-В результате создан и загружен в `vagrant cloud` образ виртуальной машины. Данный подход позволяет создать базовый образ виртульной машины с необходимыми обновлениями или набором предустановленного ПО. К примеру при создании MySQL-кластера можно создать образ с предустановленным MySQL, а при развертывании нужно будет добавить или изменить только настройки (то есть отличающуюся часть). Таким образом существенно экономя затрачиваемое время.
+В результате создан и загружен в `vagrant cloud` образ виртуальной машины. Данный подход позволяет создать базовый образ виртульной машины с необходимыми обновлениями или набором предустановленного ПО. 
+К примеру при создании MySQL-кластера можно создать образ с предустановленным MySQL, а при развертывании нужно будет добавить или изменить только настройки (то есть отличающуюся часть). 
+Таким образом существенно экономя затрачиваемое время.
 
 # **Заключение**
 
-Результат выполнения ранее описанных действий по клонированию базового репозитория, созданию своего, создание кастомного образа с обновленным ядром и его публикация является необходимым для получения зачета по базовому домашнему заданию. Для проверки вам будет необходимо прислать ссылку на ваш репозиторий в чат с преподавателем в Личном кабинете. Репозиторий, соотвественно, должен быть публичным. На все возникшие вопросы можно получить ответ в переписке с преподавателем в чате с преподавателем или, что более рекомендуется, в слаке вашей группы.
+Результат выполнения ранее описанных действий по клонированию базового репозитория, созданию своего, создание кастомного образа с обновленным ядром и его публикация является необходимым для получения зачета по базовому домашнему заданию. 
+Для проверки вам будет необходимо прислать ссылку на ваш репозиторий в чат с преподавателем в Личном кабинете. 
+Репозиторий, соотвественно, должен быть публичным. На все возникшие вопросы можно получить ответ в переписке с преподавателем в чате с преподавателем или, что более рекомендуется, в слаке вашей группы.
