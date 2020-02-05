@@ -1,7 +1,13 @@
 # **Домашняя робота №1**
 
 1 установим виртуальную машину
+```
+vagrant init centos/7
 
+vagrant up
+
+vagrant ssh
+```
 
 # **Kernel update**
 
