@@ -2,3 +2,4 @@
 *.vdi
 .vagrant/
 *.retry
+*.box

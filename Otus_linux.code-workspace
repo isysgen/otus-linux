@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../linux_admin"
+		},
+		{
+			"path": "../linux-adm"
+		}
+	],
+	"settings": {}
+}
