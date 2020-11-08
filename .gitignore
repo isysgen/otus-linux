@@ -4,3 +4,4 @@
 .vagrant/
 *.retry
 *.box
+*.pdf
