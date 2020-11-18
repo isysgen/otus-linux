@@ -16,18 +16,22 @@ vagrant up должен поднимать 2 виртуалки: сервер и
 ### Vagrant стенд для NFS
 
 Стенд поднимает 2 виртуалки: сервер и клиент  
-На сервере расшарена директория /var/share и в ней upload с правами на запись  
+На сервере расшарена директория /mnt/nfs и в ней upload с правами на запись  
 На клиента она автоматически монтируется при старте (fstab или autofs)  
 Требования для NFS: NFSv3 по UDP, включенный firewall
 
 Настройка сервера
 ```
-# mkdir /var/share
-# mkdir /var/share/upload
-# chmod 777 /var/share/upload
+# mkdir /mnt/nfs
+# chown -R vagrant:vagrant /mnt/nfs/
+# chmod  777 /mnt/nfs
+# mkdir -p /mnt/nfs/upload
+# chown -R vagrant:vagrant /mnt/nfs/upload/
+# chmod  777 /mnt/nfs/upload/
 
 # cat /etc/exports
-/var/share 192.168.50.0/24(rw,sync,root_squash)
+/mnt/nfs    *(rw,sync)
+/mnt/nfs/upload *(rw,sync)
 ```
 
 В файле /etc/sysconfig/nfs устанавливаем статические порты, отключаем tcp и оставляем только 3 версию
@@ -51,30 +55,25 @@ firewall-cmd --zone=internal --add-interface=eth1
 firewall-cmd --zone=internal --remove-service=dhcpv6-client
 firewall-cmd --zone=internal --remove-service=mdns
 firewall-cmd --zone=internal --remove-service=samba-client
-#firewall-cmd --zone=internal --add-port=111/tcp
 firewall-cmd --zone=internal --add-port=111/udp
-#firewall-cmd --zone=internal --add-port=2049/tcp
 firewall-cmd --zone=internal --add-port=2049/udp
-#firewall-cmd --zone=internal --add-port=32803/tcp
 firewall-cmd --zone=internal --add-port=32769/udp
-#firewall-cmd --zone=internal --add-port=892/tcp
 firewall-cmd --zone=internal --add-port=892/udp
-#firewall-cmd --zone=internal --add-port=662/tcp
 firewall-cmd --zone=internal --add-port=662/udp
 firewall-cmd --runtime-to-permanent
 firewall-cmd --reload
 ```
 На клиенте включаем фаервол и указываем монтирование через fstab
 ```
-192.168.50.10:/var/share /mnt/nfs_share nfs udp,rw
+192.168.50.10:/mnt/nfs /mnt/nfs/upload nfs udp,rw
 ```
 Проверка
 ```
-192.168.50.10:/var/share on /mnt/nfs_share type nfs (rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=192.168.50.10,mountvers=3,mountport=892,mountproto=udp,local_lock=none,addr=192.168.50.10)
+192.168.50.10:/mnt/nfs on /mnt/nfs/upload type nfs (rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=192.168.50.10,mountvers=3,mountport=892,mountproto=udp,local_lock=none,addr=192.168.50.10)
 
-[root@client /]# mkdir /mnt/nfs_share/1
-mkdir: cannot create directory ‘/mnt/nfs_share/1’: Permission denied
-[root@client /]# mkdir /mnt/nfs_share/upload/1
+[root@client /]# mkdir /mnt/nfs/1
+mkdir: cannot create directory ‘/mnt/nfs/1’: Permission denied
+[root@client /]# mkdir /mnt/nfs/upload/1
 [root@client /]#
 
 [root@server ~]# firewall-cmd --list-all --zone=internal
