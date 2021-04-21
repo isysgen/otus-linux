@@ -11,3 +11,4 @@
 14. [Home work #14 Lesson_14_pam](https://github.com/isysgen/otus-linux/tree/master/Lesson_14_pam)
 15. [Home work #15 Lesson_15_selinux](https://github.com/isysgen/otus-linux/tree/master/Lesson_15_selinux)
 17. [Home work #17 Lesson_17_ansible](https://github.com/isysgen/otus-linux/tree/master/Lesson_17_ansible)
+26. [Home work #26 Lesson_26_dynamic_web](https://github.com/isysgen/otus-linux/tree/master/Lesson_26_dynamic_web)
