@@ -5,7 +5,7 @@
 4. [Home work #4 Lesson_4_NFS_SAMBA](https://github.com/isysgen/otus-linux/tree/master/Lesson_4_NFS_SAMBA)
 5. [Home work #5 Lesson_5_zfs](https://github.com/isysgen/otus-linux/tree/master/Lesson_5_ZFS)
 6. [Home work #6 Lesson_6_boot](https://github.com/isysgen/otus-linux/tree/master/Lesson_6_boot)
-7. [Home work #7 Lesson_6_rpm](https://github.com/isysgen/otus-linux/tree/master/Lesson_6_rpm)
+7. [Home work #7 Lesson_7_rpm](https://github.com/isysgen/otus-linux/tree/master/Lesson_7_rpm)
 10. [Home work #10 Lesson_10_processes](https://github.com/isysgen/otus-linux/tree/master/Lesson_10_processes)
 12. [Home work #12 Lesson_12_systemd](https://github.com/isysgen/otus-linux/tree/master/Lesson_12_systemd)
 14. [Home work #14 Lesson_14_pam](https://github.com/isysgen/otus-linux/tree/master/Lesson_14_pam)
