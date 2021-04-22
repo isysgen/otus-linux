@@ -40,7 +40,7 @@
 
 Маршруты с равноценными линками
 ```
-[root@r2 vagrant]# vtyshdo sh   
+[root@r2 vagrant]# vtysh
 r2(config)# do show  ip route  ospf 
 Codes: K - kernel route, C - connected, S - static, R - RIP,
        O - OSPF, I - IS-IS, B - BGP, A - Babel,
