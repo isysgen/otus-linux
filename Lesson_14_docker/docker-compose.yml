@@ -1,0 +1,19 @@
+version: '3'
+services:
+    nginx:
+        image: fa83afa8bbcd/myimages:nginx_v1
+        ports:
+            - "80:80"
+        volumes:
+            - ./hosts:/etc/nginx/conf.d
+            - ./www:/var/www
+            - ./logs:/var/log/nginx
+        depends_on:
+            - php
+    php:
+        image: fa83afa8bbcd/otus-php:01
+        volumes:
+            - ./www:/var/www
+networks:
+  default:
+    driver: bridge
