@@ -62,7 +62,7 @@
 На сервере Configuration -> Hosts добавил хост, который необходимо мониторить с шаблоном Template OS Linux by Zabbix agent.
 На центральной консоли (Monitoring -> Dashboards -> Global View) добавил три новых дашборда
 
-![Zabbix](./img/grafana.png)
+![Zabbix](./img/zabbix.png)
 
 вышел затык с установкой агента не смог победить 
 ```
