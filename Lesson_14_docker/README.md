@@ -23,7 +23,9 @@
 Вот несколько примеров:
 
 https://github.com/tomzo/docker-kernel-ide
+
 https://github.com/moul/docker-kernel-builder
+
 https://www.olimex.com/forum/index.php?topic=4498.0
 
 #### Установка Docker
@@ -48,9 +50,9 @@ Docker version 1.13.1, build 0be3e21/1.13.1
 1. Создаем свой кастомный образ на базе alpine
 - Создаем отдельную директорию и кладем туда два файла:
 
-  - Создаем файл Dockerfile (во вложении)
+  - Создаем файл [Dockerfile](/images/nginx/dockerfile)
 
-  - Создаем файл index.html с измененным содержимым (этот файл будет импортирован в наш образ при создании) (во вложении)
+  - Создаем файл [index.html](/images/nginx/html/index.html) с измененным содержимым (этот файл будет импортирован в наш образ при создании)
 
 - После чего собираем наш образ командой ```docker build -t fa83afa8bbcd/myimages:nginx_v1 .```
 Далее можем запустить наш контейнер командой ```docker run -d -p 1234:80 fa83afa8bbcd/myimages:nginx_v1```
