@@ -121,3 +121,9 @@ zabbix-non-supported                                                            
  Вы можете попробовать --skip-broken чтобы обойти проблему
  Вы можете попробовать запустить: rpm -Va --nofiles --nodigest
  ```
+
+ при этом 
+ ```
+ [root@client]# openssl_latest version
+OpenSSL 1.1.0f  25 May 2017
+```
