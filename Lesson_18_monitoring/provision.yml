@@ -1,0 +1,16 @@
+---
+- name: Setup prometheus server
+  hosts: prometheus
+  become: true
+  
+  roles:
+    - install-prometheus-server
+    - install-grafana
+    - install-node-exporter
+
+- name: Setup node-exporter
+  hosts: client
+  become: true
+    
+  roles:
+    - install-node-exporter
